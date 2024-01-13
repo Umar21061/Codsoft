@@ -1,0 +1,67 @@
+IRIS FLOWER CLASSIFICATION
+The Iris flower dataset consists of three species: setosa, versicolor,
+and virginica. These species can be distinguished based on their
+measurements. Now, imagine that you have the measurements
+of Iris flowers categorized by their respective species. Your
+objective is to train a machine learning model that can learn from
+these measurements and accurately classify the Iris flowers into
+their respective species.
+Use the Iris dataset to develop a model that can classify iris
+flowers into different species based on their sepal and petal
+measurements. This dataset is widely used for introductory
+classification tasks.
+Expaination 
+The provided Python code is for developing a machine learning model using the Iris flower dataset,
+which contains measurements of sepal length, sepal width, petal length, petal width, and 
+the corresponding species of Iris flowers (setosa, versicolor, and virginica). The objective is 
+to train a model that can accurately classify Iris flowers based on these measurements.
+The code begins by loading the dataset from a CSV file and separating features (X) and the target 
+variable (y). It then splits the data into training and testing sets. The features are standardized
+using StandardScaler, a common practice for some machine learning algorithms.
+A K-Nearest Neighbors (KNN) classifier is initialized, trained using the training set, and then
+used to predict the species of Iris flowers in the test set. The model's performance is evaluated
+by calculating the accuracy and displaying a classification report, which includes precision, recall,
+and F1-score for each class.
+The number of neighbors in the KNN algorithm can be adjusted based on the specific requirements. 
+The code provides a foundation for classification tasks using the Iris dataset, and users can experiment
+with different algorithms and parameters to optimize model performance.
+Code:
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, classification_report
+
+file_path = "Desktop\IRIS.csv"
+iris_data = pd.read_csv(file_path)
+
+# Display the first few rows of the dataset
+print(iris_data.head())
+
+# Separate features (X) and target variable (y)
+X = iris_data.drop('species', axis=1)
+y = iris_data['species']
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+
+knn_classifier = KNeighborsClassifier(n_neighbors=3)  # You can adjust the number of neighbors as needed
+
+knn_classifier.fit(X_train_scaled, y_train)
+
+
+y_pred = knn_classifier.predict(X_test_scaled)
+
+
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy:.2f}")
+
+
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
