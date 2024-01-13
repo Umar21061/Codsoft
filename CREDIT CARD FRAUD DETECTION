@@ -1,0 +1,55 @@
+CREDIT CARD FRAUD DETECTION
+Build a machine learning model to identify fraudulent credit card
+transactions.
+Preprocess and normalize the transaction data, handle class
+imbalance issues, and split the dataset into training and testing sets.
+Train a classification algorithm, such as logistic regression or random
+forests, to classify transactions as fraudulent or genuine.
+Evaluate the model'
+s performance using metrics like precision, recall,
+and F1-score, and consider techniques like oversampling or
+undersampling for improving results.
+Explaination :
+This Python code aims to build a machine learning model for detecting fraudulent credit card transactions. 
+It starts by loading the credit card dataset, exploring its basic information, and then preprocessing the
+data by removing the 'Time' column and normalizing the features. To handle class imbalance (more genuine 
+transactions than fraudulent ones), the code oversamples the minority class using the RandomOverSampler 
+from imbalanced-learn. The dataset is then split into training and testing sets. A RandomForestClassifier
+is employed to train the model on the training set. Finally, the model is evaluated on the test set, and 
+metrics like precision, recall, and F1-score are provided in the classification report along with the 
+confusion matrix. The goal is to create an effective model for identifying potentially fraudulent credit card transactions.
+Code:
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from imblearn.over_sampling import RandomOverSampler
+from imblearn.under_sampling import RandomUnderSampler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+
+
+file_path = r'Desktop\creditcard.csv'
+data = pd.read_csv(file_path)
+print(data.info())
+
+
+data = data.drop(['Time'], axis=1)
+X = data.drop('Class', axis=1)
+y = data['Class']
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+
+ros = RandomOverSampler(random_state=42)
+X_resampled, y_resampled = ros.fit_resample(X, y)
+
+
+X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.2, random_state=42)
+
+
+classifier = RandomForestClassifier(random_state=42)
+classifier.fit(X_train, y_train)
+
+y_pred = classifier.predict(X_test)
+print("Classification Report:\n", classification_report(y_test, y_pred))
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
