@@ -1,0 +1,64 @@
+TITANIC SURVIVAL PREDICTION
+Use the Titanic dataset to build a model that predicts whether a
+passenger on the Titanic survived or not. This is a classic beginner
+project with readily available data.
+The dataset typically used for this project contains information
+about individual passengers, such as their age, gender, ticket
+class, fare, cabin, and whether or not they survived
+Solutions:
+The provided Python script uses the Titanic dataset to build a decision tree classifier predicting passenger survival.
+It preprocesses the data by handling missing values, converting categorical features, and dropping unnecessary columns.
+The model is trained and evaluated, yielding accuracy and a classification report. Finally, the script visualizes feature importance using a bar plot.
+Code:
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, classification_report
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+data_path = r'C:\Users\omputer Surgeon\Desktop\Titanic-Dataset.csv'
+titanic_data = pd.read_csv(data_path)
+
+
+print(titanic_data.head())
+
+
+titanic_data['Age'].fillna(titanic_data['Age'].median(), inplace=True)
+titanic_data['Fare'].fillna(titanic_data['Fare'].median(), inplace=True)
+titanic_data['Embarked'].fillna(titanic_data['Embarked'].mode()[0], inplace=True)
+
+titanic_data['Sex'] = titanic_data['Sex'].map({'male': 0, 'female': 1})
+titanic_data = pd.get_dummies(titanic_data, columns=['Embarked'], drop_first=True)
+
+
+titanic_data.drop(['Name', 'Ticket', 'Cabin'], axis=1, inplace=True)
+
+X = titanic_data.drop('Survived', axis=1)
+y = titanic_data['Survived']
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+clf = DecisionTreeClassifier(random_state=42)
+clf.fit(X_train, y_train)
+
+
+y_pred = clf.predict(X_test)
+
+
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy:.2f}")
+
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+feature_importance = pd.DataFrame({'Feature': X.columns, 'Importance': clf.feature_importances_})
+feature_importance = feature_importance.sort_values(by='Importance', ascending=False)
+
+plt.figure(figsize=(10, 6))
+sns.barplot(x='Importance', y='Feature', data=feature_importance)
+plt.title('Feature Importance')
+plt.show()
